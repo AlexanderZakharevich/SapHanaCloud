@@ -5,7 +5,7 @@
  */
 
  const USER_TABLE = "dev::User";
- const SEQ_NAME = "dev::User";
+ const SEQ_NAME = "dev::usid";
 
 function usersCreate(param){
     $.trace.error(JSON.stringify(param));
@@ -22,7 +22,7 @@ function usersCreate(param){
     //TODO now HERE you have oUser object. Similar to xsjs/lib/user/user.xsjslib method doPost line 13
 
     //Get Next Personnel Number
-  	pStmt = param.connection.prepareStatement('select "dev::usid".NEXTVAL from dummy');
+  	pStmt = param.connection.prepareStatement(`select \"${SEQ_NAME}\".NEXTVAL from dummy`);
   	var result = pStmt.executeQuery();
 
       while (result.next()) {
@@ -35,7 +35,7 @@ function usersCreate(param){
   	for( var i = 0; i<2; i++){
   		var pStmt;
   		if(i<1){
-  			pStmt = param.connection.prepareStatement("insert into \"dev::User\" values(?,?)" );
+  			pStmt = param.connection.prepareStatement("insert into \"${USER_TABLE}\" values(?,?)" );
   		}else{
   			pStmt = param.connection.prepareStatement("TRUNCATE TABLE \"" + after + "\"" );
   			pStmt.executeUpdate();
@@ -49,6 +49,37 @@ function usersCreate(param){
 
 }
 }
+function usersUpdate(param) {
+	var after = param.afterTableName;
+
+	var pStmt = param.connection.prepareStatement("select * from \"" + after + "\"");
+	var oResult = pStmt.executeQuery();
+
+	var oUserItems = recordSetToJSON(oResult, "items");
+	var oUser = oUserItems.items[0];
+
+	var uStmt;
+	uStmt = param.connection.prepareStatement(`UPDATE \"${USER_TABLE}\" SET \"name\" = '${oUser.name}' WHERE \"usid\" = ${oUser.usid};`);
+	uStmt.executeUpdate();
+    uStmt.close();
+}
+
+function usersDelete(param){
+
+    var after = param.afterTableName;
+
+	var pStmt = param.connection.prepareStatement("select * from \"" + after + "\"");
+	var oResult = pStmt.executeQuery();
+
+	var oUserItems = recordSetToJSON(oResult, "items");
+	var oUser = oUserItems.items[0];
+    
+    var uStmt;
+	uStmt = param.connection.prepareStatement(`DELETE FROM \"${USER_TABLE}\" WHERE \"usid\" = ${oUser.usid};`);
+	uStmt.executeUpdate();
+    uStmt.close();
+}
+
 function recordSetToJSON(rs,rsName){
     rsName = typeof rsName !== 'undefined' ? rsName : 'entries';
 
