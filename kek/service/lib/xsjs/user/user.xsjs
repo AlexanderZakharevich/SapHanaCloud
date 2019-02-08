@@ -12,18 +12,18 @@ function forRequest(obj) {
         try {
             switch ($.request.method) {
                 case $.net.http.PUT : {
-                    forRequest(doPut);
-                    // userLib.doPut(JSON.parse($.request.body.asString()));
+                    
+                     userLib.doPut(JSON.parse($.request.body.asString()));
                     break;
                 }
                 case $.net.http.POST : {
-                    forRequest(doPost);
-                    // userLib.doPost(JSON.parse($.request.body.asString()));
+                    
+                    userLib.doPost(JSON.parse($.request.body.asString()));
                     break;
                 }
                 case $.net.http.DEL : {
-                    forRequest(doDelete);
-                    // userLib.doDelete(JSON.parse($.request.body.asString()));
+                    
+                     userLib.doDelete(JSON.parse($.request.body.asString()));
                     break;
                 }
                 case $.net.http.GET : {
